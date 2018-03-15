@@ -8,3 +8,4 @@ npm-debug.log
 #.ruby-version
 #.node-version
 .envrc
+*~
