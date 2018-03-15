@@ -5,9 +5,8 @@ set -e
 # Create symlinks from iCloud to home directory
 cd "$HOME"
 [ ! -L icloud-drive ] && ln -s "$HOME/Library/Mobile Documents/com~apple~CloudDocs" icloud-drive
-[ ! -L lolbrary ] && ln -s "$HOME/Library" lolbrary
 
-for link in .gemrc .gitconfig .gitignore_global .homebridge .profile .bashrc .vim .vimrc bin .vscode .zprofile .zshenv .zshrc .fzf.zsh .fzf.bash; do
+for link in .gemrc .gitconfig .gitignore_global .homebridge .profile .bash_profile .bashrc .vim .vimrc bin .vscode .zprofile .zshenv .zshrc .fzf.zsh .fzf.bash; do
   if [ -L "$HOME/$link" ]; then
     echo "Link '$link' already exists"
   else
@@ -24,62 +23,78 @@ cd ..
 # Set macOS default hidden settings
 
 ## Disabling shadows on windows when taking screenshots - requires killall SystemUIServer
-defaults write com.apple.screencapture disable-shadow -bool true
+#defaults write com.apple.screencapture disable-shadow -bool true
 ## allow disabling inline video in safari http://www.kirkville.com/stop-auto-play-videos-from-annoying-you-in-your-browser/
-defaults write com.apple.Safari WebKitMediaPlaybackAllowsInline -bool false
-defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2AllowsInlineMediaPlayback -bool false
+#defaults write com.apple.Safari WebKitMediaPlaybackAllowsInline -bool false
+#defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2AllowsInlineMediaPlayback -bool false
 
-# Install things
-if command -v brew; then
+if command -v brew > /dev/null; then
   echo "Homebrew installed; updating:"
   brew update
 else
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 fi
 
-# Brew installations
-for pkg in zsh bash-completion git nodenv node-build rbenv ruby-build postgresql wget tree jid jq chromedriver phantomjs heroku fzf ripgrep; do
-  if brew list -1 | grep -q "^${pkg}\$"; then
+brew list -1 > brew.list
+for pkg in bash-completion git pyenv rbenv ruby-build nodenv node-build stern kubectx direnv kubernetes-helm ripgrep wget tree jid jq fzf; do
+  if grep -q "^${pkg}\$" brew.list; then
     echo "Package '$pkg' is installed; updating:"
     brew upgrade "$pkg" --cleanup || true
   else
     brew install "$pkg"
   fi
 done
+rm brew.list
 
-if brew list -1 | grep -q "^universal-ctags\$"; then
-  echo "Package 'universal-ctags' is installed; updating:"
-  brew upgrade bash-completion --cleanup || true
-else
-  brew tap universal-ctags/universal-ctags
-  brew install --HEAD universal-ctags
+if ! which minikube > /dev/null; then
+  curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.25.0/minikube-darwin-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
 fi
 
-## Set shell to zsh
-
-# Disabled until I get around to configuring zsh
-#sudo dscl . -create /Users/$USER UserShell /usr/local/bin/zsh
+if ! which kubectl > /dev/null; then
+  curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/darwin/amd64/kubectl
+  chmod +x ./kubectl
+  sudo mv ./kubectl /usr/local/bin/kubectl
+fi
 
 ## Set up node
-NODE_VERSION="6.9.2"
-if [ -d ".nodenv/versions/$NODE_VERSION" ]; then
-  echo "Node $NODE_VERSION already installed"
-else
-  nodenv install "$NODE_VERSION"
-fi
 eval "$(nodenv init -)"
-nodenv global "$NODE_VERSION"
+for NODE_VERSION in 6.9.2 8.9.0 9.0.0; do
+  if [ -d ".nodenv/versions/$NODE_VERSION" ]; then
+    echo "Node $NODE_VERSION already installed"
+  else
+    nodenv install "$NODE_VERSION"
+  fi
+done
 
 ## Set up ruby
-RUBY_VERSION="2.4.1"
-if [ -d ".rbenv/versions/$RUBY_VERSION" ]; then
-  echo "Ruby $RUBY_VERSION already installed"
-else
-  rbenv install "$RUBY_VERSION"
-fi
 eval "$(rbenv init -)"
-rbenv global "$RUBY_VERSION"
-gem install bundler
+for RUBY_VERSION in 2.3.5 2.4.2; do
+  if [ -d ".rbenv/versions/$RUBY_VERSION" ]; then
+    echo "Ruby $RUBY_VERSION already installed"
+  else
+    rbenv install "$RUBY_VERSION"
+    rbenv shell "$RUBY_VERSION"
+    gem install bundler
+  fi
+done
+
+## Set up python
+PY2_VERSION="2.7.14"
+PY3_VERSION="3.6.3"
+
+install_pyver_if_missing() {
+  if ! grep $1 pyenv.versions > /dev/null; then
+    pyenv install $1
+  fi
+}
+
+pyenv versions > pyenv.versions
+for pyver in $PY2_VERSION $PY3_VERSION; do
+  install_pyver_if_missing $pyver
+done
+rm pyenv.versions
+
+pyenv global $PY3_VERSION $PY2_VERSION
 
 # Run profile
 source .profile

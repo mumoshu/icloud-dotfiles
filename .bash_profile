@@ -1,30 +1,4 @@
-set -uv
-
-if ! which brew > /dev/null; then
-  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-fi
-
-install_if_missing() {
-  if ! grep $1 brew.list > /dev/null; then
-    brew install $1
-  fi
-}
-
-brew list > brew.list
-for pkg in pyenv rbenv nodenv stern kubectx direnv kubernetes-helm ripgrep; do
-  install_if_missing $pkg
-done
-rm brew.list
-
-if ! which minikube > /dev/null; then
-  curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.25.0/minikube-darwin-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
-fi
-
-if ! which kubectl > /dev/null; then
-  curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/darwin/amd64/kubectl
-  chmod +x ./kubectl
-  sudo mv ./kubectl /usr/local/bin/kubectl
-fi
+set -u
 
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
@@ -39,18 +13,6 @@ fi
 
 PY2_VERSION="2.7.14"
 PY3_VERSION="3.6.3"
-
-install_pyver_if_missing() {
-  if ! grep $1 pyenv.versions > /dev/null; then
-    pyenv install $1
-  fi
-}
-
-pyenv versions > pyenv.versions
-for pyver in $PY2_VERSION $PY3_VERSION; do
-  install_pyver_if_missing $pyver
-done
-rm pyenv.versions
 
 pyenv global $PY3_VERSION $PY2_VERSION
 
