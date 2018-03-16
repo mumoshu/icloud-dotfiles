@@ -99,6 +99,8 @@ rm pyenv.versions
 
 pyenv global $PY3_VERSION $PY2_VERSION
 
+pip3 install --upgrade onelogin-aws-cli
+
 # Run profile
 source .profile
 
