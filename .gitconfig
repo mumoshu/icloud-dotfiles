@@ -4,8 +4,8 @@
 	autosetuprebase = always
 	autosetupmerge = true
 [user]
-	name = Justin Searls
-	email = searls@gmail.com
+	name = Yusuke KUOKA
+	email = ykuoka@gmail.com
 [core]
 	editor = mvim -f
 	excludesfile = /Users/justin/.gitignore_global

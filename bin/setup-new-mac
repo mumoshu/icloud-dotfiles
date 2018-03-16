@@ -36,7 +36,7 @@ else
 fi
 
 brew list -1 > brew.list
-for pkg in bash-completion git pyenv rbenv ruby-build nodenv node-build stern kubectx direnv kubernetes-helm ripgrep wget tree jid jq fzf sops golang; do
+for pkg in bash-completion git hub awscli pyenv rbenv ruby-build nodenv node-build stern kubectx direnv kubernetes-helm ripgrep wget tree jid jq fzf sops golang; do
   if grep -q "^${pkg}\$" brew.list; then
     echo "Package '$pkg' is installed; updating:"
     brew upgrade "$pkg" --cleanup || true
@@ -45,6 +45,9 @@ for pkg in bash-completion git pyenv rbenv ruby-build nodenv node-build stern ku
   fi
 done
 rm brew.list
+
+git config --global user.name 'Yusuke KUOKA'
+git config --global user.email 'ykuoka@gmail.com
 
 if ! which minikube > /dev/null; then
   curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.25.0/minikube-darwin-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
