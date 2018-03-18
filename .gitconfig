@@ -7,7 +7,7 @@
 	name = Yusuke KUOKA
 	email = ykuoka@gmail.com
 [core]
-	editor = mvim -f
+	editor = code --wait
 	excludesfile = /Users/justin/.gitignore_global
 	mergetool = opendiff
 [heroku]
