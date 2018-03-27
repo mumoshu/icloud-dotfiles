@@ -47,7 +47,7 @@ done
 rm brew.list
 
 git config --global user.name 'Yusuke KUOKA'
-git config --global user.email 'ykuoka@gmail.com
+git config --global user.email 'ykuoka@gmail.com'
 git config --global core.editor 'code --wait'
 
 if ! which minikube > /dev/null; then
