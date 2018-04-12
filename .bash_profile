@@ -42,6 +42,7 @@ eval "$(direnv hook bash)"
 set -u
 
 alias k=kubectl
+alias ks='kubectl --namespace kube-system'
 alias kn=kubens
 alias kc=kubectx
 alias s=stern

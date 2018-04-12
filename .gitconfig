@@ -13,7 +13,6 @@
 [heroku]
 	account = personal
 [merge]
-	tool = opendiff
 [diff]
 	renames = true
 [help]
