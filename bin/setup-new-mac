@@ -36,7 +36,7 @@ else
 fi
 
 brew list -1 > brew.list
-for pkg in bash-completion git hub awscli pyenv pyenv-virtualenv rbenv ruby-build nodenv node-build stern kubectx direnv kubernetes-helm ripgrep wget tree jid jq fzf sops golang dep glide docker docker-compose; do
+for pkg in bash-completion git hub awscli pyenv pyenv-virtualenv rbenv ruby-build nodenv node-build stern kubectx direnv kubernetes-helm ripgrep wget tree jid jq fzf sops golang dep glide docker docker-compose peco; do
   if grep -q "^${pkg}\$" brew.list; then
     echo "Package '$pkg' is installed; updating:"
     brew upgrade "$pkg" --cleanup || true

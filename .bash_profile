@@ -12,7 +12,7 @@ if command -v pyenv 1>/dev/null 2>&1; then
 fi
 
 PY2_VERSION="2.7.14"
-PY3_VERSION="3.6.3"
+PY3_VERSION="3.6.5"
 
 pyenv global $PY3_VERSION $PY2_VERSION
 
@@ -213,4 +213,8 @@ gf() {
 # Add Visual Studio Code (code)
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin/"
 
+# Cargo binaries
+export PATH="$PATH:$HOME/.cargo/bin"
+
 export KUBE_EDITOR='code --wait'
+export VIRTUAL_ENV=""
